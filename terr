@@ -1,0 +1,92 @@
+Agenda:
+1.What is infra as code.
+2.IAC vs Configuration management.
+3.Intro to terraform
+4.Installing terraform
+5.Terraform operations
+6.Terraform code
+7.Terraform code
+8.Terraform Demo
+
+Terraform:
+	1. Terraform is an open-source infra as code software tool created by Harshicorp.
+	2. It enables users to define and provision a DC infra using a high-level config language known as Harshicorp Configuration Language or optionally JSON.
+	3. Using terraform we can deploy services on multiple clouds for eg: using cloud formation we can deploy the services only on AWS.
+
+Use ".tf "as extension while writing a terraform file
+
+Example:
+
+provider "aws" {
+ region = "ap-south-1"
+}
+resource "aws_instance" "instance1" {
+ ami = "ami-id"
+ instance_type = "t2.micro"
+tags = {
+     Name = "terraform-instance"
+}
+
+Commands to be performed after writing terraform file:
+1.terraform init
+2.terraform plan -- it will show you what is going to happen.
+3.terraform apply -- Implementation will happen here 
+4.terraform destroy -- it will destroy the instance created.(delete)
+
+Immutability : You create a infra ec2 instance and if you want to make any change terraform will destroy the previous ec2 instance and it will deploy new ec2 instance with new configuration.
+
+EG:
+provider "aws" {
+ region = "ap-south-1"
+}
+resource "aws_instance" "instance1" {
+ ami = "ami-id"
+ instance_type = "t2.micro"
+Key_name = "Devops"
+vpc_security_group_ids = ["sg-00……"]
+tags = {
+     Name = "terraform-instance"
+}
+provisioner "remote-exec" {
+ connection {
+   type = "ssh"
+   user = "ubuntu"
+   private_key =  file("Devops.pem")
+   host = self.public_ip
+}
+
+Inline = [
+"echo this is example command which will get executed remotely",
+"sudo apt-get update -y",
+"sudo apt-get install apache2 -y",
+]
+}
+
+Commands:
+1.terraform init
+2.terraform plan
+3.terraform apply -auto-approve ( it will not ask for yes or no )
+
+Create multiple instances:
+
+provider "aws" {
+ region = "ap-south-1"
+}
+resource "aws_instance" "instance1" {
+ count =  2
+ ami = "ami-id"
+ instance_type = "t2.micro"
+Key_name = "Devops"
+vpc_security_group_ids = ["sg-00……"]
+tags = {
+     Name = "terraform-instance-${count.index +1}" -- if we want to add different tags.
+}
+
+terraform destroy -target=aws_instance.instance1[0] -- To destroy the specific instance.
+
+End to END example:
+
+
+
+
+
